@@ -109,28 +109,37 @@ fn find_number_positions(input: &str, symbols: &[Symbol]) -> Vec<Position> {
             let upper_range = if symbol.index == chars.len() - 1 { chars.len() - 1 } else { symbol.index + 1 };
 
             for (relative_index, char) in chars[lower_range..=upper_range].iter().enumerate() {
-                if char.is_digit(10) {
-                    let line_number: usize = match relative_line {
-                        0 => symbol.line - 1,
-                        1 => if symbol.line == 0 { symbol.line + 1 } else { symbol.line },
-                        2 => symbol.line + 1,
-                        _ => panic!(),
-                    };
-
-                    let index: usize = match relative_index {
-                        0 => if symbol.index == 0 { 0 } else { symbol.index - 1 },
-                        1 => symbol.index,
-                        2 => if symbol.index == chars.len() - 1 { chars.len() - 1 } else { symbol.index + 1 },
-                        _ => panic!(),
-                    };
-
-                    adjacent_number_indices.push(Position::from(index, line_number, symbol.is_gear(), *symbol));
+                match check_for_number(*char, *symbol, (lower_range, upper_range), relative_line, relative_index) {
+                    Some(position) => adjacent_number_indices.push(position),
+                    None => {},
                 }
             }
         }
     }
 
     return adjacent_number_indices;
+}
+
+fn check_for_number(char: char, symbol: Symbol, line_range: (usize, usize), relative_line: usize, relative_index: usize) -> Option<Position> {
+    if char.is_digit(10) {
+        let line_number: usize = match relative_line {
+            0 => symbol.line - 1,
+            1 => if symbol.line == 0 { symbol.line + 1 } else { symbol.line },
+            2 => symbol.line + 1,
+            _ => panic!(),
+        };
+
+        let index: usize = match relative_index {
+            0 => line_range.0,
+            1 => symbol.index,
+            2 => line_range.1,
+            _ => panic!(),
+        };
+
+        return Some(Position::from(index, line_number, symbol.is_gear(), symbol));
+    }
+
+    return None;
 }
 
 fn find_numbers(input: &str, number_positions: &[Position]) -> Vec<u64> {
@@ -176,7 +185,6 @@ fn find_numbers(input: &str, number_positions: &[Position]) -> Vec<u64> {
                     !gear_groups.contains(&(second_number.value, v.value)) &&
                     v.position != second_number.position {
                     gear_groups.push((v.value, second_number.value));
-                    println!("{:?}", gear_groups);
                 }
             }
         }
