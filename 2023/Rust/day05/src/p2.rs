@@ -9,6 +9,11 @@ pub fn process(input: &str) -> u32 {
     // build maps
     // send seed ranges through maps
     // sort vec grab first?
+    //
+    // TODO: optimizations
+    //  Could multithread seed lookup
+    //  Could also combine all the maps into one
+
     println!("Getting seed ranges...");
     let seed_ranges: Vec<Range<u32>> = get_seeds(input);
     println!("Getting maps...");
