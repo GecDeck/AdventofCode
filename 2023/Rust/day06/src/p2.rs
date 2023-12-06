@@ -36,12 +36,19 @@ fn get_race_info(input: &str) -> Race {
 
 fn get_variants(race: Race) -> u64 {
     // Every second you charge the boat is 1 m/s increase in speed
-    let mut successes: u64 = 0;
+    let mut successes: u64 = race.time + 1;
+    // Maximum possible variants is the time limit + 1
 
     for charge_time in 0..=race.time {
         let time_left = race.time - charge_time;
-        if charge_time * time_left > race.record {
-            successes += 1
+        if charge_time * time_left < race.record {
+            successes -= 2;
+            // Every failure has an equivalent failure on the opposite side of the parabella
+        }
+        else if charge_time * time_left > race.record {
+            return successes;
+            // We've already handled remove all failures from both sides
+            //  so if we get a success then all variants left are successes so we can return now
         }
     }
 
