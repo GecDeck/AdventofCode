@@ -10,5 +10,7 @@
 - Day 8 **
 - Day 9 **
     - For some reason the tests all pass but the actual input returns the negative of the correct answer :(
+- Day 10 **
+    - Stack overflow on p2 if not run in release
 ## C
 - Day 1 *
